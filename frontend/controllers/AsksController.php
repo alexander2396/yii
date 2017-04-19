@@ -75,7 +75,7 @@ class AsksController extends Controller
     }
     
     public function actionQuestion($answer = false)
-    {
+    { 
         $model = new Asks();
 
         if ($model->load(Yii::$app->request->post())) {
@@ -88,16 +88,19 @@ class AsksController extends Controller
             {
                 if (strlen($word) > 6)
                 { 
-                    $res = Asks::find()->filterWhere(['like', 'question', $word])->one();  
+                    $res = Asks::find()->filterWhere(['like', 'question', $word])->orderBy('count')->one();  
                     if(isset($res->id))
+                    {
                         $result[] = $res->answer;
+                        $res->count = $res->count + 1;
+                        $res->save();
+                    }
                 }
             }
-            //print_r($result);die;
             if(!isset($result) || empty($result) || $result[0] == false)
             {
                 $model->save();
-                $answer = Asks::getDefaultAnswer();;
+                $answer = Asks::getDefaultAnswer();
             }
             else
             {
@@ -110,10 +113,15 @@ class AsksController extends Controller
                 $answer = implode(' ', $answer);  
             }
 
-            return $this->redirect(['question', 'answer' => $answer]);
+            return $this->render('question', [
+                'model'  => $model,
+                'question'  => $_SESSION['question'],
+                'answer' => $answer
+            ]);
         } else {
             return $this->render('question', [
                 'model'  => $model,
+                'question'  => '',
                 'answer' => $answer
             ]);
         }
@@ -126,6 +134,7 @@ class AsksController extends Controller
 
         if(!$model)
         {
+            Yii::$app->session->setFlash('success', "Активных вопросов нет");
             return $this->redirect('/frontend/web/index.php');
         }
         

@@ -9,13 +9,14 @@ use yii\widgets\ActiveForm;
 
 $this->title = 'Задать вопрос';
 ?>
+
 <div class="asks-create">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'question')->textInput(['maxlength' => true, 'value' => '']) ?>
+    <?= $form->field($model, 'question')->textInput(['maxlength' => true, 'value' => $question]) ?>
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Спросить' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
