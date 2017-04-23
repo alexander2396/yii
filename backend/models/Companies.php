@@ -16,6 +16,9 @@ use Yii;
  */
 class Companies extends \yii\db\ActiveRecord
 {
+    
+    public $file;
+    
     /**
      * @inheritdoc
      */
@@ -32,7 +35,8 @@ class Companies extends \yii\db\ActiveRecord
         return [
             [['title', 'created_at', 'status'], 'required'],
             [['created_at'], 'safe'],
-            [['status'], 'string'],
+            [['file'],'file'],
+            [['status','logo'], 'string'],
             [['title'], 'string', 'max' => 100],
         ];
     }
@@ -47,6 +51,7 @@ class Companies extends \yii\db\ActiveRecord
             'title' => 'Title',
             'created_at' => 'Created At',
             'status' => 'Status',
+            'file' => 'Logo',
         ];
     }
 

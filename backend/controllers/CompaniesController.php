@@ -8,6 +8,8 @@ use backend\models\CompaniesSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+use yii\web\ForbiddenHttpException;
 
 /**
  * CompaniesController implements the CRUD actions for Companies model.
@@ -63,17 +65,32 @@ class CompaniesController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Companies();
+        if( Yii::$app->user->can('create-company') ){
+            $model = new Companies();
 
-        if ($model->load(Yii::$app->request->post())) {
-            $model->created_at = date('Y-m-d');
-            $model->save();
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
-            return $this->render('create', [
-                'model' => $model,
-            ]);
+            if ($model->load(Yii::$app->request->post())) {
+
+                // get the instance of the uploaded file
+                $imageName = $model->title;
+                $model->file = UploadedFile::getInstance($model, 'file');           
+                $model->file->saveAs('uploads/'.$imageName.'.'.$model->file->extension);
+
+                //save in db
+                $model->logo = 'uploads/'.$imageName.'.'.$model->file->extension;
+
+                $model->created_at = date('Y-m-d');
+                $model->save();
+
+                return $this->redirect(['view', 'id' => $model->id]);
+            } else {
+                return $this->render('create', [
+                    'model' => $model,
+                ]);
+            }
+        } else{
+            throw new ForbiddenHttpException;
         }
+        
     }
 
     /**
