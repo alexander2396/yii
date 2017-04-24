@@ -12,6 +12,7 @@ use frontend\models\PasswordResetRequestForm;
 use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
+use frontend\models\Lab2;
 
 /**
  * Site controller
@@ -141,6 +142,7 @@ class SiteController extends Controller
         return $this->render('about');
     }
 
+    
     /**
      * Displays Lab 2 page.
      *
@@ -177,59 +179,25 @@ class SiteController extends Controller
             }
         }
         
-     /*
-        foreach($rowset as $key=>$item)
-        {
-            if(isset($rowset[$key+1]) && $rowset[$key] == $rowset[$key+1])
-            {
-                foreach($r[$key] as $k=>$i)
-                {
-                    if(isset($r[$key+1][$k]) && is_int($r[$key+1][$k])){
-                        $r[$key][$k] = $r[$key][$k] + $r[$key+1][$k];
-                    }
-                }
-                foreach($r[$key+1] as $k=>$i)
-                {
-                    if(!isset($r[$key][$k]) && $k != $key){
-                        $r[$key][$k] = $r[$key+1][$k];
-                    }
-                }
-                $r[$key][$key+1] = $r[$key][$key+1] + $r[$key+1][$key];
-                
-                unset($r[$key+1]);
-             
-                $flag = $key;
-                foreach($r as $key=>$item)
-                {
-                    foreach($r as $k=>$i)
-                    {
-                        if($key != $flag)
-                        {
-                            $r[$key][$flag-1] = $r[$key][$flag-1] + $r[$key][$flag];
-                            unset($r[$key][$flag]); 
-                            goto a;
-                        }
-                    }
-                }
- 
-            }
-        }
-        */
-        $view = '<table>';
+        $model = new Lab2();
+        $r = $model->removeSimilar($r);
+
+        $view = '<div class="col-md-6 col-lg-6"><table class="table table-bordered">';
         foreach($r as $key=>$item)
         {
             $view .= '<tr>';
             foreach($item as $k=>$i)
             {
-                $view .= '<td>'.$i.'</td>';
+                if(is_string($i)) $view .= '<td>'.$i.'</td>';
+                else             $view .= '<td class="text-center">'.$i.'</td>';
             }
             $view .= '</tr>';
         }
-        $view .= '</table>';
-        echo $view;die;
-        //print_r($r);die;
+        $view .= '</table></div>';
         
-        return $this->render('lab2');
+        return $this->render('lab2', [
+            'view' => $view,
+        ]);
     }
     
     /**
