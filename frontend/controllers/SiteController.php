@@ -142,6 +142,97 @@ class SiteController extends Controller
     }
 
     /**
+     * Displays Lab 2 page.
+     *
+     * @return mixed
+     */
+    public function actionLab2()
+    {
+        $string = "По улице ходила большая крокодила. Она, она зелёная была.";
+        
+        $string = preg_replace("/[^а-яёa-z\s]/iu", '', $string);
+        $rowset = explode(' ',$string);
+        foreach($rowset as $key=>$item)
+        {
+            $rowset[$key] = mb_strtolower($item);
+        }
+        
+        foreach($rowset as $key=>$item)
+        {
+            foreach($rowset as $k=>$i)
+            {
+                $r[$key]['word'] = $item;
+                $r[$key][$k] = 0; 
+            }
+        }
+        
+        foreach($rowset as $key=>$item)
+        {
+            foreach($rowset as $k=>$i)
+            {
+                if(isset($rowset[$key-2])) $r[$key][$key-2] = 1;
+                if(isset($rowset[$key-1])) $r[$key][$key-1] = 2;
+                if(isset($rowset[$key+1])) $r[$key][$key+1] = 2;
+                if(isset($rowset[$key+2])) $r[$key][$key+2] = 1;  
+            }
+        }
+        
+     /*
+        foreach($rowset as $key=>$item)
+        {
+            if(isset($rowset[$key+1]) && $rowset[$key] == $rowset[$key+1])
+            {
+                foreach($r[$key] as $k=>$i)
+                {
+                    if(isset($r[$key+1][$k]) && is_int($r[$key+1][$k])){
+                        $r[$key][$k] = $r[$key][$k] + $r[$key+1][$k];
+                    }
+                }
+                foreach($r[$key+1] as $k=>$i)
+                {
+                    if(!isset($r[$key][$k]) && $k != $key){
+                        $r[$key][$k] = $r[$key+1][$k];
+                    }
+                }
+                $r[$key][$key+1] = $r[$key][$key+1] + $r[$key+1][$key];
+                
+                unset($r[$key+1]);
+             
+                $flag = $key;
+                foreach($r as $key=>$item)
+                {
+                    foreach($r as $k=>$i)
+                    {
+                        if($key != $flag)
+                        {
+                            $r[$key][$flag-1] = $r[$key][$flag-1] + $r[$key][$flag];
+                            unset($r[$key][$flag]); 
+                            goto a;
+                        }
+                    }
+                }
+ 
+            }
+        }
+        */
+        $view = '<table>';
+        foreach($r as $key=>$item)
+        {
+            $view .= '<tr>';
+            foreach($item as $k=>$i)
+            {
+                $view .= '<td>'.$i.'</td>';
+            }
+            $view .= '</tr>';
+        }
+        $view .= '</table>';
+        echo $view;die;
+        //print_r($r);die;
+        
+        return $this->render('lab2');
+    }
+    
+    /**
      * Signs user up.
      *
      * @return mixed
