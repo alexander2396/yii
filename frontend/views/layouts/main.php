@@ -35,8 +35,19 @@ AppAsset::register($this);
         ],
     ]);
     $menuItems = [
-        ['label' => 'Lab 1', 'url' => ['/site/index']],
-        ['label' => 'Lab 2', 'url' => ['/site/lab2']],
+        [
+            'label' => 'Математическое моделирование',
+            'items' => [
+                 ['label' => 'ЛР 1', 'url' => '/frontend/web/math-model/lab1'],
+            ],
+        ],
+        [
+            'label' => 'Искуственный интелект',
+            'items' => [
+                 ['label' => 'Lab 1', 'url' => ['/site/index']],
+            ['label' => 'Lab 2', 'url' => ['/site/lab2']],
+            ],
+        ],
         ['label' => 'Contact', 'url' => ['/site/contact']],
     ];
     if (Yii::$app->user->isGuest) {
