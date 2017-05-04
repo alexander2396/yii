@@ -3,37 +3,46 @@
 namespace frontend\controllers;
 
 use Yii;
+use frontend\models\MMLab1;
+use yii\helpers\Json;
 
 class MathModelController extends \yii\web\Controller
 {
     public function actionLab1()
     {
-        if (Yii::$app->request->post()) {
-            
-            die;
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-        
         return $this->render('lab1');
     }
     
     public function actionLab1Result($number)
     {
 
-        $r0 = (string)$number;
-        $r1 = str_shuffle($r0);
+        $model = new MMLab1(); 
         
-        for($i = 0; $i < 100; $i++)
-        {
-            $len = strlen($r0*$r1); 
-            $r2 = (int)substr($r0*$r1,ceil($len/4),strlen($r0));
-            if(strlen($r2) < strlen($r0)) $r2 = (int)substr($r0*$r1,ceil($len/4),strlen($r0)+1);          
-            $res[$i] = (int)$r2;
-            $r0 = (int)$r1;
-            $r1 = (int)$r2;
-        }
+        //метод серединных произведений
+        $rowset = $model->middleMultiplication($number);
         
-        print_r($res);die;
+        $view = '<h3>Метод серединных произведений</h3>';
+        
+        //представление для массива
+        $view .= $model->arrayView($rowset);
+        
+        //представление для характеристик
+        $view .= $model->calculateRNG($rowset);
+        
+        //----------------------------------------------
+        
+        //метод перемешивания
+        $rowset = $model->mixing($number);
+        
+        $view .= '<h3>Метод перемешивания</h3>';
+        
+        //представление для массива
+        $view .= $model->arrayView($rowset);
+        
+        //представление для характеристик
+        $view .= $model->calculateRNG($rowset);
+        
+        echo $view;
 
     }
 

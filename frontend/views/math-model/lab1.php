@@ -11,23 +11,23 @@ use yii\widgets\ActiveForm;
 
     <?= Html::beginForm('', 'post'); ?>
 
-    <div class="form-group">
-        <?= Html::label('Введите число', 'number', ['class' => 'control-label']) ?>
-        <?= Html::input('number','','', ['id' => 'number','class' => 'form-control',]); ?>
-    </div>
+        <div class="form-group">
+            <?= Html::label('Введите число', 'number', ['class' => 'control-label']) ?>
+            <?= Html::input('number','','', ['id' => 'number','class' => 'form-control',]); ?>
+        </div>
 
-    <div class="form-group">
-        <?= Html::button('Далее', ['class' => 'btn btn-success',
-            'onclick' => ' 
-                    $.post( "/frontend/web/math-model/lab1-result?number='.'"+$("#number").val(), function ( data ){
-                        $("#result").html(data);
-                    });
-                ']) ?>
-    </div>
-    
-    <p id="result"></p>
+        <div class="form-group">
+            <?= Html::button('Просчитать', ['class' => 'btn btn-success',
+                'onclick' => ' 
+                        $.post( "/frontend/web/math-model/lab1-result?number='.'"+$("#number").val(), function ( data ){
+                            $("#result").html(data);
+                        });
+                    ']) ?>
+        </div>
 
-<?php Html::endForm(); ?>
+        <div id="result"></div>
+
+    <?php Html::endForm(); ?>
     
 </div>
 
