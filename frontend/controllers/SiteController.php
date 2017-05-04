@@ -13,6 +13,7 @@ use frontend\models\ResetPasswordForm;
 use frontend\models\SignupForm;
 use frontend\models\ContactForm;
 use frontend\models\Lab2;
+use yii\helpers\ArrayHelper;
 
 /**
  * Site controller
@@ -208,6 +209,10 @@ class SiteController extends Controller
     public function actionSignup()
     {
         $model = new SignupForm();
+        
+        $authItems = \backend\models\AuthItem::find()->all();
+        $authItems = ArrayHelper::map($authItems, 'name', 'name');
+        
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
@@ -218,6 +223,7 @@ class SiteController extends Controller
 
         return $this->render('signup', [
             'model' => $model,
+            'authItems' => $authItems
         ]);
     }
 

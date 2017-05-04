@@ -33,11 +33,23 @@ class Companies extends \yii\db\ActiveRecord
         return [
             [['title', 'created_at', 'status'], 'required'],
             [['start_date', 'created_at'], 'safe'],
+            ['start_date', 'checkDate'],
             [['status'], 'string'],
             [['title'], 'string', 'max' => 100],
         ];
     }
 
+    public function checkDate($attribute,$params)
+    {
+        $today = date('Y-m-d');
+        $selectedDate = date("Y-m-d", strtotime($this->start_date));
+
+        if($selectedDate > $today)
+        {
+            $this->addError($attribute,'start date must be before today');
+        }
+    }
+    
     /**
      * @inheritdoc
      */
