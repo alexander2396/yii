@@ -1,21 +1,18 @@
 <?php
 
-namespace backend\controllers;
+namespace frontend\controllers;
 
 use Yii;
-use backend\models\Companies;
-use backend\models\Branches;
-use backend\models\CompaniesSearch;
+use frontend\models\PoItem;
+use frontend\models\PoItemSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
-use yii\web\ForbiddenHttpException;
 
 /**
- * CompaniesController implements the CRUD actions for Companies model.
+ * PoItemController implements the CRUD actions for PoItem model.
  */
-class CompaniesController extends Controller
+class PoItemController extends Controller
 {
     /**
      * @inheritdoc
@@ -33,12 +30,12 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Lists all Companies models.
+     * Lists all PoItem models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new CompaniesSearch();
+        $searchModel = new PoItemSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -48,7 +45,7 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Displays a single Companies model.
+     * Displays a single PoItem model.
      * @param integer $id
      * @return mixed
      */
@@ -60,52 +57,25 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Creates a new Companies model.
+     * Creates a new PoItem model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        if( Yii::$app->user->can('create-company') ){
-            $model = new Companies();
-            $branch = new Branches();
+        $model = new PoItem();
 
-            if ($model->load(Yii::$app->request->post()) && $branch->load(Yii::$app->request->post())) {
-
-                // get the instance of the uploaded file
-                $imageName = $model->title;
-                if(!empty($model->file))
-                {
-                   $model->file = UploadedFile::getInstance($model, 'file');           
-                    $model->file->saveAs('uploads/'.$imageName.'.'.$model->file->extension);
-
-                    //save in db
-                    $model->logo = 'uploads/'.$imageName.'.'.$model->file->extension; 
-                }
-                
-
-                $model->created_at = date('Y-m-d');
-                $model->save();
-                
-                $branch->company_id = $model->id;
-                $branch->created_at = date('Y-m-d');
-                $branch->save();
-                
-                return $this->redirect(['view', 'id' => $model->id]);
-            } else {
-                return $this->render('create', [
-                    'model' => $model,
-                    'branch' => $branch,
-                ]);
-            }
-        } else{
-            throw new ForbiddenHttpException;
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'id' => $model->id]);
+        } else {
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         }
-        
     }
 
     /**
-     * Updates an existing Companies model.
+     * Updates an existing PoItem model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -124,7 +94,7 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Deletes an existing Companies model.
+     * Deletes an existing PoItem model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -137,15 +107,15 @@ class CompaniesController extends Controller
     }
 
     /**
-     * Finds the Companies model based on its primary key value.
+     * Finds the PoItem model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Companies the loaded model
+     * @return PoItem the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Companies::findOne($id)) !== null) {
+        if (($model = PoItem::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
