@@ -13,7 +13,7 @@ use kartik\select2\Select2;
 
 <div class="branches-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id'=>$model->formName()]); ?>
     
     <?= $form->field($model, 'company_id')->widget(Select2::classname(), [
             'data' => ArrayHelper::map(Companies::find()->all(), 'id', 'title'),
@@ -34,5 +34,32 @@ use kartik\select2\Select2;
     </div>
 
     <?php ActiveForm::end(); ?>
-
+    
 </div>
+
+<?php
+$script = <<< JS
+    $('form#{$model->formName()}').on('beforeSubmit', function(e)
+    {
+        var \$form = $(this);
+        $.post(
+            \$form.attr("action"), //serialize Yii2 form
+            \$form.serialize()
+        )
+            .done(function(result) {
+            if(result == 1) {
+                $(\$form).trigger("reset");
+                $(document).find('#secondmodal').modal('hide');
+                $.pjax.reload({container:'#branchesGrid'});
+            } else {
+                $("#message").html(result);
+            }
+            }).fail(function()
+            {
+                console.log("server error");
+            });
+        return false;
+    });           
+JS;
+$this->registerJs($script);
+?>

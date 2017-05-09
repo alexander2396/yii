@@ -3,17 +3,16 @@
 namespace backend\controllers;
 
 use Yii;
-use backend\models\Branches;
-use backend\models\BranchesSearch;
+use backend\models\Events;
+use backend\models\EventsSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\ForbiddenHttpException;
 
 /**
- * BranchesController implements the CRUD actions for Branches model.
+ * EventsController implements the CRUD actions for Events model.
  */
-class BranchesController extends Controller
+class EventsController extends Controller
 {
     /**
      * @inheritdoc
@@ -31,22 +30,30 @@ class BranchesController extends Controller
     }
 
     /**
-     * Lists all Branches models.
+     * Lists all Events models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new BranchesSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $events = Events::find()->all();
 
+        $tasks = [];
+        foreach ($events as $event) {
+            $task = new \yii2fullcalendar\models\Event();
+            $task->id = $event->id;
+            $task->title = $event->title;
+            $task->start = $event->created_date;
+            $task->backgroundColor = 'green';
+            $tasks[] = $task;
+        }
+        
         return $this->render('index', [
-            'searchModel' => $searchModel,
-            'dataProvider' => $dataProvider,
+            'events' => $tasks,
         ]);
     }
 
     /**
-     * Displays a single Branches model.
+     * Displays a single Events model.
      * @param integer $id
      * @return mixed
      */
@@ -58,35 +65,26 @@ class BranchesController extends Controller
     }
 
     /**
-     * Creates a new Branches model.
+     * Creates a new Events model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
-    public function actionCreate()
+    public function actionCreate($date)
     {
-        if( Yii::$app->user->can('create-branch') ){
-            $model = new Branches();
+        $model = new Events();
+        $model->created_date = $date;
 
-            if ($model->load(Yii::$app->request->post())) {
-                $model->created_at = date('Y-m-d');
-                if($model->save()) {
-                    echo 1;
-                } else {
-                    echo 0;
-                }              
-            } else {
-                return $this->renderAjax('create', [
-                    'model' => $model,
-                ]);
-            }
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            return $this->redirect(['index']);
         } else {
-            throw new ForbiddenHttpException;
+            return $this->renderAjax('create', [
+                'model' => $model,
+            ]);
         }
-        
     }
 
     /**
-     * Updates an existing Branches model.
+     * Updates an existing Events model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -105,7 +103,7 @@ class BranchesController extends Controller
     }
 
     /**
-     * Deletes an existing Branches model.
+     * Deletes an existing Events model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -117,41 +115,16 @@ class BranchesController extends Controller
         return $this->redirect(['index']);
     }
 
-    public function actionLists($id)
-    {
-        
-        $countBranches = Branches::find()
-                ->where(['company_id' => $id])
-                ->count();
-
-        $branches = Branches::find()
-                ->where(['company_id' => $id])
-                ->orderBy('id DESC')
-                ->all();
-
-        if($countBranches>0){
-            foreach($branches as $branch){
-                echo "<option value='".$branch->id."'>".$branch->title."</option>";
-            }
-        }
-        else{
-            echo "<option>-</option>";
-        }
-        
-        //echo "<option>-</option>";
-
-    }
-    
     /**
-     * Finds the Branches model based on its primary key value.
+     * Finds the Events model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Branches the loaded model
+     * @return Events the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Branches::findOne($id)) !== null) {
+        if (($model = Events::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

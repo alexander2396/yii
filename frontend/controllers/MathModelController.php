@@ -40,7 +40,7 @@ class MathModelController extends \yii\web\Controller
         $view .= $model->arrayView($rowset);
         
         //представление для характеристик
-        $view .= $model->calculateRNG($rowset);
+        $view .= $model->calculateRNG($rowset);   
         
         echo $view;
 

@@ -56,7 +56,9 @@ return [
             'rules' => [
             ],
         ],
-        
+        'MyComponent' => [
+            'class' => 'backend\components\MyComponent',
+        ],
     ],
     'params' => $params,
 ];
